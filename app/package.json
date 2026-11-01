@@ -1,0 +1,27 @@
+{
+  "name": "promisetwin-app",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "lint": "eslint src/frontend/**/*",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "@forge/api": "^8.4.0",
+    "@forge/bridge": "7.2.1-next.13",
+    "@forge/react": "12.4.0-next.3",
+    "@forge/resolver": "2.0.2-next.0",
+    "react": "^18.2.0",
+    "zod": "^4.6.7"
+  }
+}

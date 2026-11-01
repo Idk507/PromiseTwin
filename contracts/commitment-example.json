@@ -1,0 +1,45 @@
+{
+  "id": "promise-demo-001",
+  "tenantId": "synthetic-tenant",
+  "source": {
+    "product": "JSM",
+    "issueKey": "SUP-101",
+    "issueId": "10001"
+  },
+  "customerReference": "demo-acme",
+  "ownerAccountId": "DEMO_ACCOUNT",
+  "promiseText": "Eliminate duplicate invoice charges for demo customer",
+  "lifecycle": "CONFIRMED",
+  "risk": "NONE",
+  "version": 1,
+  "criteria": [
+    {
+      "id": "C1",
+      "type": "jira-work-completed",
+      "required": true
+    },
+    {
+      "id": "C2",
+      "type": "deployment-evidence",
+      "required": true
+    },
+    {
+      "id": "C3",
+      "type": "regression-proof",
+      "required": true
+    },
+    {
+      "id": "C4",
+      "type": "customer-acknowledgement",
+      "required": true
+    }
+  ],
+  "linkedWork": [
+    {
+      "product": "Jira",
+      "issueKey": "PAY-218"
+    }
+  ],
+  "evidence": [],
+  "acknowledgement": null
+}

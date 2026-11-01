@@ -1,0 +1,12 @@
+node_modules/
+app/node_modules/
+app/dist/
+app/.forge/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+playwright-report/
+.DS_Store
+__pycache__/
