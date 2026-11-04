@@ -1,21 +1,75 @@
 modules:
   jira:issuePanel:
-    - key: promisetwin-app-hello-world-issue-panel
+    - key: promisetwin-request-panel
       resource: main
       resolver:
         function: resolver
       render: native
-      title: promisetwin-app
+      title: PromiseTwin
       icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  # P4 portfolio: one page per project (UI Kit; subpages are Custom UI only). Read-only listing;
+  # per-viewer scoping and every permission check happen in the resolver, not in the page.
+  jira:projectPage:
+    - key: promisetwin-portfolio
+      resource: portfolio
+      resolver:
+        function: resolver
+      render: native
+      title: Promises
+      icon: https://developer.atlassian.com/platform/forge/images/icons/issue-panel-icon.svg
+  # Events run as the app with no user. ignoreSelf drops events this app itself caused.
+  trigger:
+    - key: promisetwin-issue-updated
+      function: issue-updated
+      events:
+        - avi:jira:updated:issue
+      filter:
+        ignoreSelf: true
+  # Hourly bounded sweep that recovers missed or lost events (scheduled trigger limits: max 5).
+  scheduledTrigger:
+    - key: promisetwin-reconcile
+      function: reconcile
+      interval: hour
   function:
     - key: resolver
       handler: index.handler
+    - key: issue-updated
+      handler: index.onIssueUpdated
+    - key: reconcile
+      handler: index.reconcileSweep
 resources:
   - key: main
     path: src/frontend/index.jsx
+  - key: portfolio
+    path: src/frontend/portfolio.jsx
 app:
   runtime:
     name: nodejs24.x
     memoryMB: 256
     architecture: arm64
   id: ari:cloud:ecosystem::app/ce1af152-e661-4d21-b864-c56d1606015c
+  # Entity and attribute declarations cannot be deleted once deployed (Forge docs): keep minimal.
+  # No custom indexes: lookups use the built-in `by-key` index via key prefixes.
+  storage:
+    entities:
+      - name: contract
+        attributes:
+          tenantId:
+            type: string
+          revision:
+            type: integer
+          doc:
+            type: any
+      - name: audit-event
+        attributes:
+          tenantId:
+            type: string
+          contractId:
+            type: string
+          doc:
+            type: any
+permissions:
+  scopes:
+    - read:jira-work
+    - read:servicedesk-request
+    - storage:app

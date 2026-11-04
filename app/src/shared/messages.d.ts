@@ -1,0 +1,14 @@
+export const REFUSAL_TEXT: Record<string, string>;
+export const DETAIL_TEXT: Record<string, string>;
+export const PREDICATE_TEXT: Record<string, string>;
+export const CRITERION_STATUS_TEXT: Record<string, string>;
+export const LIFECYCLE_TEXT: Record<string, string>;
+export const AUDIT_TEXT: Record<string, string>;
+export function customerLabelFor(customerReference: string): string | undefined;
+export function describeDetail(token: string): string | undefined;
+export function describeBlocker(token: string, ctx?: { requiredCustomerLabel?: string; criterionText?: Record<string, string> }): string;
+export function describeRefusal(r: { code?: string; detail?: string[] }, ctx?: { requiredCustomerLabel?: string; criterionText?: Record<string, string> }): string[];
+export function describeAudit(a: { type: string; fromLifecycle?: string; toLifecycle?: string }): string;
+export function relativeTime(iso: string, nowMs?: number): string;
+export function timeline(lifecycle: string): { stage: string; label: string; state: 'done' | 'current' | 'todo' }[];
+export function nextStep(contract: { lifecycle: string; atRisk?: boolean }, available: string[], reviewRequired?: { required?: boolean }): string;

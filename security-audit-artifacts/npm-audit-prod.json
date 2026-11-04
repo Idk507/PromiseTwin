@@ -1,0 +1,396 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@atlaskit/adf-schema": {
+      "name": "@atlaskit/adf-schema",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@atlaskit/adf-schema-generator",
+        "@atlaskit/editor-prosemirror"
+      ],
+      "effects": [
+        "@atlaskit/adf-utils",
+        "@atlaskit/forge-react-types",
+        "@forge/bridge",
+        "@forge/react"
+      ],
+      "range": ">=26.4.1",
+      "nodes": [
+        "node_modules/@atlaskit/adf-schema",
+        "node_modules/@atlaskit/adf-utils/node_modules/@atlaskit/adf-schema",
+        "node_modules/@atlaskit/forge-react-types/node_modules/@atlaskit/adf-schema"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@atlaskit/adf-schema-generator": {
+      "name": "@atlaskit/adf-schema-generator",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@atlaskit/editor-prosemirror"
+      ],
+      "effects": [
+        "@atlaskit/adf-schema"
+      ],
+      "range": ">=1.7.5",
+      "nodes": [
+        "node_modules/@atlaskit/adf-schema-generator"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@atlaskit/adf-utils": {
+      "name": "@atlaskit/adf-utils",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@atlaskit/adf-schema"
+      ],
+      "effects": [],
+      "range": ">=19.0.1",
+      "nodes": [
+        "node_modules/@atlaskit/adf-utils"
+      ],
+      "fixAvailable": true
+    },
+    "@atlaskit/editor-prosemirror": {
+      "name": "@atlaskit/editor-prosemirror",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "prosemirror-view"
+      ],
+      "effects": [
+        "@atlaskit/adf-schema",
+        "@atlaskit/adf-schema-generator"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@atlaskit/editor-prosemirror",
+        "node_modules/@atlaskit/forge-react-types/node_modules/@atlaskit/editor-prosemirror"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@atlaskit/forge-react-types": {
+      "name": "@atlaskit/forge-react-types",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@atlaskit/adf-schema"
+      ],
+      "effects": [
+        "@forge/react"
+      ],
+      "range": ">=2.8.0",
+      "nodes": [
+        "node_modules/@atlaskit/forge-react-types"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@forge/api": {
+      "name": "@forge/api",
+      "severity": "moderate",
+      "isDirect": true,
+      "via": [
+        "@forge/manifest"
+      ],
+      "effects": [],
+      "range": "6.1.1-experimental-3ed5db1 - 6.1.1-experimental-78c5fee || >=6.1.2-next.0",
+      "nodes": [
+        "node_modules/@forge/api"
+      ],
+      "fixAvailable": {
+        "name": "@forge/api",
+        "version": "6.1.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@forge/bridge": {
+      "name": "@forge/bridge",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@atlaskit/adf-schema",
+        "@forge/manifest"
+      ],
+      "effects": [
+        "@forge/react"
+      ],
+      "range": "5.5.0-experimental-6de6b19 - 5.5.0-next.1 || >=5.6.0-next.0",
+      "nodes": [
+        "node_modules/@forge/bridge"
+      ],
+      "fixAvailable": {
+        "name": "@forge/bridge",
+        "version": "5.5.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@forge/manifest": {
+      "name": "@forge/manifest",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        "glob"
+      ],
+      "effects": [
+        "@forge/api",
+        "@forge/bridge"
+      ],
+      "range": ">=4.20.2-next.0",
+      "nodes": [
+        "node_modules/@forge/bridge/node_modules/@forge/manifest",
+        "node_modules/@forge/manifest"
+      ],
+      "fixAvailable": {
+        "name": "@forge/bridge",
+        "version": "5.5.0",
+        "isSemVerMajor": true
+      }
+    },
+    "@forge/react": {
+      "name": "@forge/react",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@atlaskit/adf-schema",
+        "@atlaskit/adf-utils",
+        "@atlaskit/forge-react-types",
+        "@forge/bridge"
+      ],
+      "effects": [],
+      "range": ">=10.9.0-next.0",
+      "nodes": [
+        "node_modules/@forge/react"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    },
+    "glob": {
+      "name": "glob",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244013,
+          "name": "glob",
+          "dependency": "glob",
+          "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+          "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=9.0.0 <=14.0.1"
+        },
+        "minimatch"
+      ],
+      "effects": [
+        "@forge/manifest"
+      ],
+      "range": "3.0.0 - 14.0.1",
+      "nodes": [
+        "node_modules/@forge/bridge/node_modules/glob",
+        "node_modules/@forge/manifest/node_modules/glob"
+      ],
+      "fixAvailable": {
+        "name": "@forge/bridge",
+        "version": "5.5.0",
+        "isSemVerMajor": true
+      }
+    },
+    "markdown-it": {
+      "name": "markdown-it",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1242600,
+          "name": "markdown-it",
+          "dependency": "markdown-it",
+          "title": "markdown-it: Quadratic complexity in smartquotes with unmatched closing quotes",
+          "url": "https://github.com/advisories/GHSA-r7fv-28h4-cvq7",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<14.3.2"
+        },
+        {
+          "source": 1242646,
+          "name": "markdown-it",
+          "dependency": "markdown-it",
+          "title": "markdown-it: Quadratic-time denial of service in inline HTML parsing with html enabled",
+          "url": "https://github.com/advisories/GHSA-vfgh-jcmw-g37q",
+          "severity": "low",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 3.7,
+            "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:L"
+          },
+          "range": "<14.3.3"
+        },
+        {
+          "source": 1242672,
+          "name": "markdown-it",
+          "dependency": "markdown-it",
+          "title": "markdown-it: Quadratic-time rendering of a single multi-line link reference definition with default options (regression since 14.0)",
+          "url": "https://github.com/advisories/GHSA-gfr2-rv44-r23c",
+          "severity": "high",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": ">=14.1.0 <14.3.3"
+        },
+        {
+          "source": 1243031,
+          "name": "markdown-it",
+          "dependency": "markdown-it",
+          "title": "markdown-it linkify: true has two quadratic paths, so a few hundred KB of markdown blocks the event loop for tens of seconds",
+          "url": "https://github.com/advisories/GHSA-253c-mchw-3w2r",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-400",
+            "CWE-407"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<14.3.1"
+        }
+      ],
+      "effects": [],
+      "range": "<=14.3.2",
+      "nodes": [
+        "node_modules/markdown-it"
+      ],
+      "fixAvailable": true
+    },
+    "minimatch": {
+      "name": "minimatch",
+      "severity": "moderate",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1244012,
+          "name": "minimatch",
+          "dependency": "minimatch",
+          "title": "minimatch has potential denial of service via globparts amplification",
+          "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249",
+          "severity": "moderate",
+          "cwe": [
+            "CWE-405"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<11.0.1"
+        }
+      ],
+      "effects": [
+        "glob"
+      ],
+      "range": "<11.0.1",
+      "nodes": [
+        "node_modules/@forge/bridge/node_modules/minimatch",
+        "node_modules/@forge/manifest/node_modules/minimatch"
+      ],
+      "fixAvailable": {
+        "name": "@forge/bridge",
+        "version": "5.5.0",
+        "isSemVerMajor": true
+      }
+    },
+    "prosemirror-view": {
+      "name": "prosemirror-view",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1241270,
+          "name": "prosemirror-view",
+          "dependency": "prosemirror-view",
+          "title": "ProseMirror has a XSS vulnerability in prosemirror-view's paste handling",
+          "url": "https://github.com/advisories/GHSA-c8x8-7fp4-3x9w",
+          "severity": "high",
+          "cwe": [
+            "CWE-79"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": "<1.42.3"
+        }
+      ],
+      "effects": [
+        "@atlaskit/editor-prosemirror"
+      ],
+      "range": "<1.42.3",
+      "nodes": [
+        "node_modules/prosemirror-view"
+      ],
+      "fixAvailable": {
+        "name": "@forge/react",
+        "version": "11.4.0",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 4,
+      "high": 9,
+      "critical": 0,
+      "total": 13
+    },
+    "dependencies": {
+      "prod": 422,
+      "dev": 167,
+      "optional": 47,
+      "peer": 37,
+      "peerOptional": 0,
+      "total": 589
+    }
+  }
+}
