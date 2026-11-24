@@ -1,0 +1,1 @@
+{"vulns":[],"scanner":"FSRT","started_at":"2026-11-04T17:03:21.7429688Z","ended_at":"2026-11-04T17:03:22.9278224Z","scanned":[""],"errors":false}

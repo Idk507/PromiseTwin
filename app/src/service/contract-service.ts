@@ -105,6 +105,8 @@ const projectKeySchema = z.string().regex(/^[A-Z][A-Z0-9_]{1,30}$/);
 const cursorSchema = z.string().regex(/^[A-Za-z0-9_#:-]{1,300}$/);
 
 const MAX_SOURCE_CHECKS = 20;
+/** Parallel Jira reads allowed per request: faster page loads without a burst that could trip rate limits. */
+export const MAX_PARALLEL_JIRA_READS = 6;
 /** Bounds fan-out: each contract view can trigger up to MAX_SOURCE_CHECKS Jira reads. */
 export const MAX_CONTRACTS_PER_ISSUE = 20;
 const issueKeySchema = z.string().regex(/^[A-Z][A-Z0-9_]{1,30}-\d{1,9}$/);
@@ -199,10 +201,26 @@ export class ContractService {
 
   constructor(private readonly d: Deps) {}
 
+  private inFlight = 0;
+  private readonly waiters: Array<() => void> = [];
+
+  /** Runs one Jira read under a small per-request concurrency cap (slots are handed over directly). */
+  private async withJiraSlot<R>(fn: () => Promise<R>): Promise<R> {
+    if (this.inFlight < MAX_PARALLEL_JIRA_READS) this.inFlight++;
+    else await new Promise<void>((resolve) => this.waiters.push(resolve));
+    try {
+      return await fn();
+    } finally {
+      const next = this.waiters.shift();
+      if (next) next();
+      else this.inFlight--;
+    }
+  }
+
   private issueMeta(key: string) {
     let p = this.metaCache.get(key);
     if (!p) {
-      p = this.d.jira.getIssueMeta(key);
+      p = this.withJiraSlot(() => this.d.jira.getIssueMeta(key));
       this.metaCache.set(key, p);
     }
     return p;
@@ -212,12 +230,23 @@ export class ContractService {
   private async identify(ctx: RequestContext) {
     const parsedKey = issueKeySchema.safeParse(ctx.issueKey);
     if (!parsedKey.success) return undefined;
-    const issue = await this.issueMeta(ctx.issueKey);
-    if (!issue) return undefined;
-    const perms = await this.d.jira.getPermissions(ctx.issueKey);
     const projectKey = ctx.issueKey.split('-')[0]!;
-    const assigned = await this.d.roles.get(ctx.tenantId, projectKey, ctx.accountId);
-    const roles = resolveRoles(perms, assigned);
+    // The three reads are independent, so they run together. A permissions or role read that fails
+    // matters only if the issue itself is readable (as before: an unreadable issue is refused first),
+    // so their errors are captured and rethrown only after that check.
+    const issueP = this.issueMeta(ctx.issueKey);
+    const permsP = this.d.jira.getPermissions(ctx.issueKey).then((v) => ({ v }), (e: unknown) => ({ e }));
+    const assignedP = this.d.roles.get(ctx.tenantId, projectKey, ctx.accountId).then((v) => ({ v }), (e: unknown) => ({ e }));
+    const issue = await issueP;
+    if (!issue) {
+      await Promise.all([permsP, assignedP]); // settled, never unhandled
+      return undefined;
+    }
+    const [permsR, assignedR] = await Promise.all([permsP, assignedP]);
+    if ('e' in permsR) throw permsR.e;
+    if ('e' in assignedR) throw assignedR.e;
+    const perms = permsR.v;
+    const roles = resolveRoles(perms, assignedR.v);
     return { issue, roles, perms, projectKey };
   }
 
@@ -258,24 +287,23 @@ export class ContractService {
   private async sourceChecks(contract: Contract): Promise<Record<string, SourceCheck>> {
     const checks: Record<string, SourceCheck> = {};
     const refs = [...new Set(contract.evidence.map((e) => e.sourceRef))].slice(0, MAX_SOURCE_CHECKS);
-    for (const ref of refs) {
+    const readable = refs.filter((ref) => {
       const e = contract.evidence.find((x) => x.sourceRef === ref)!;
       // P1 can only re-verify Jira issues; any other source type gets no check => unauthorized.
-      if (e.sourceType !== 'JIRA_ISSUE' && e.sourceType !== 'JSM_REQUEST') continue;
-      if (!issueKeySchema.safeParse(ref).success) continue;
-      const meta = await this.issueMeta(ref);
+      return (e.sourceType === 'JIRA_ISSUE' || e.sourceType === 'JSM_REQUEST') && issueKeySchema.safeParse(ref).success;
+    });
+    const metas = await Promise.all(readable.map((ref) => this.issueMeta(ref)));
+    readable.forEach((ref, i) => {
+      const meta = metas[i];
       checks[ref] = meta ? { accessible: true, revision: meta.revision, facts: meta.facts } : { accessible: false };
-    }
+    });
     return checks;
   }
 
   /** Drops linked work the viewing user cannot read themselves (data minimization). */
   private async visibleLinks(contract: Contract): Promise<{ contract: Contract; hidden: number }> {
-    const kept: Contract['linkedWork'] = [];
-    for (const l of contract.linkedWork) {
-      const meta = await this.issueMeta(l.issueKey);
-      if (meta) kept.push(l);
-    }
+    const metas = await Promise.all(contract.linkedWork.map((l) => this.issueMeta(l.issueKey)));
+    const kept = contract.linkedWork.filter((_, i) => !!metas[i]); // order preserved
     return { contract: { ...contract, linkedWork: kept }, hidden: contract.linkedWork.length - kept.length };
   }
 
@@ -286,10 +314,9 @@ export class ContractService {
    */
   private async redactReports(audit: AuditEvent[]): Promise<AuditEvent[]> {
     const refs = [...new Set(audit.flatMap((a) => a.report?.criteria.flatMap((c) => c.evidence.map((e) => e.sourceRef)) ?? []))].slice(0, MAX_SOURCE_CHECKS);
-    const readable = new Set<string>();
-    for (const ref of refs) {
-      if (issueKeySchema.safeParse(ref).success && (await this.issueMeta(ref))) readable.add(ref);
-    }
+    const valid = refs.filter((ref) => issueKeySchema.safeParse(ref).success);
+    const metas = await Promise.all(valid.map((ref) => this.issueMeta(ref)));
+    const readable = new Set<string>(valid.filter((_, i) => !!metas[i]));
     return audit.map((a) =>
       a.report
         ? { ...a, report: { ...a.report, criteria: a.report.criteria.map((c) => ({ ...c, evidence: c.evidence.filter((e) => readable.has(e.sourceRef)) })) } }
@@ -298,8 +325,13 @@ export class ContractService {
   }
 
   private async view(contract: Contract, roles: Role[]): Promise<ContractView> {
-    const ctx: EvaluationContext = { now: this.d.clock.now(), sourceChecks: await this.sourceChecks(contract) };
-    const shown = await this.visibleLinks(contract);
+    // Independent reads run together; the audit trail is redacted afterwards because it needs the audit list.
+    const [sourceChecks, shown, rawAudit] = await Promise.all([
+      this.sourceChecks(contract),
+      this.visibleLinks(contract),
+      this.d.repo.listAudit(contract.tenantId, contract.id, 20),
+    ]);
+    const ctx: EvaluationContext = { now: this.d.clock.now(), sourceChecks };
     return {
       contract: shown.contract,
       hiddenLinks: shown.hidden,
@@ -307,7 +339,7 @@ export class ContractService {
       requiredCustomerLabel: customerLabel(contract.customerReference),
       decision: evaluateFulfillment(contract, ctx),
       available: availableCommands(contract, roles),
-      audit: await this.redactReports(await this.d.repo.listAudit(contract.tenantId, contract.id, 20)),
+      audit: await this.redactReports(rawAudit),
     };
   }
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   AUDIT_TEXT, CRITERION_STATUS_TEXT, DETAIL_TEXT, LIFECYCLE_TEXT, PREDICATE_TEXT, REFUSAL_TEXT,
-  customerLabelFor, describeAudit, describeBlocker, describeDetail, describeRefusal, nextStep, relativeTime, timeline,
+  customerLabelFor, describeAudit, describeBlocker, describeDecision, plainName, describeDetail, describeRefusal, nextStep, relativeTime, timeline,
 } from '../src/shared/messages';
 import { customerLabel } from '../src/domain/verification';
 import { predicateSchema } from '../src/domain/contract';
@@ -84,7 +84,8 @@ describe('describeBlocker / describeRefusal', () => {
       code: 'PRECONDITION_FAILED',
       detail: ['CRITERION_unmet:c1', 'PREDICATE_FAILED:c1:CUSTOMER_LABEL', 'PREDICATE_FAILED:c1:LINKED_TO_SOURCE'],
     }, { requiredCustomerLabel: 'customer-acme' });
-    expect(lines.length).toBe(4);
+    expect(lines.length).toBe(3); // the generic first line is dropped once specific reasons exist
+    expect(lines[0]).not.toBe(REFUSAL_TEXT.PRECONDITION_FAILED);
     expect(lines.join(' ')).not.toMatch(/PRECONDITION_FAILED|PREDICATE_FAILED|CRITERION_/);
     expect(lines.join(' ')).toContain('customer-acme');
   });
@@ -180,5 +181,37 @@ describe('describeAudit / relativeTime / nextStep', () => {
     expect(nextStep({ lifecycle: 'FULFILLED' }, [], { required: false })).toMatch(/Done/);
     expect(nextStep({ lifecycle: 'FULFILLED' }, [], { required: true })).toBe('Reopen the promise to re-verify it.');
     expect(nextStep({ lifecycle: 'FULFILLED' }, [], { required: true })).not.toMatch(/Done/);
+  });
+});
+
+describe('wording fixes found in the clean-install run (F3, F5)', () => {
+  it('keeps the generic first line only when there is nothing more specific to say (negative)', () => {
+    expect(describeRefusal({ code: 'PRECONDITION_FAILED' })).toEqual([REFUSAL_TEXT.PRECONDITION_FAILED]);
+    expect(describeRefusal({ code: 'PRECONDITION_FAILED', detail: ['<unknown>'] })).toEqual([REFUSAL_TEXT.PRECONDITION_FAILED]);
+    // other refusal codes keep their own head even with details
+    expect(describeRefusal({ code: 'UNAUTHORIZED_ACTOR', detail: ['SELF_REVIEW'] })[0]).toBe(REFUSAL_TEXT.UNAUTHORIZED_ACTOR);
+  });
+
+  it('plainName trims trailing punctuation and whitespace and never throws on odd input', () => {
+    expect(plainName('The fix is deployed for this customer.')).toBe('The fix is deployed for this customer');
+    expect(plainName('  Done!?  ')).toBe('Done');
+    expect(plainName('Keep inner. punctuation, here')).toBe('Keep inner. punctuation, here');
+    for (const bad of [undefined, null, 5, {}, [], '', '...']) expect(plainName(bad)).toBe('');
+  });
+
+  it('a criterion that ends with a full stop no longer produces ".:" in a blocker or a decision line', () => {
+    const ctx = { criterionText: { c1: 'The fix is deployed for this customer.' } };
+    expect(describeBlocker('CRITERION_unmet:c1', ctx)).toBe('The fix is deployed for this customer: evidence does not meet the checks.');
+    expect(describeBlocker('CRITERION_unmet:c1', ctx)).not.toContain('.:');
+    // an empty or punctuation-only description falls back to the criterion id
+    expect(describeBlocker('CRITERION_missing:c1', { criterionText: { c1: '...' } })).toBe('criterion c1: no reviewed evidence yet.');
+  });
+
+  it('describeDecision reads as a sentence, names unknown statuses without codes, and marks passing gates', () => {
+    const text = { c1: 'The fix is deployed for this customer.' };
+    expect(describeDecision({ criteria: [{ criterionId: 'c1', status: 'satisfied' }], canFulfill: true }, text)).toBe('Decision: The fix is deployed for this customer is satisfied; all gates held.');
+    expect(describeDecision({ criteria: [{ criterionId: 'c1', status: 'unmet' }], canFulfill: false }, text)).toBe('Decision: The fix is deployed for this customer: evidence does not meet the checks.');
+    expect(describeDecision({ criteria: [{ criterionId: 'zz', status: 'weird' }] }, {})).toBe('Decision: zz: weird.');
+    expect(describeDecision({ criteria: [] }, {})).toBe('Decision: .');
   });
 });

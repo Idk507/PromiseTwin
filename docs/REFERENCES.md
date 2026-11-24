@@ -31,3 +31,15 @@ The agent must check documentation again at implementation time for manifest mod
 - Jira project page module (UI Kit render native, subpages Custom UI only): https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-project-page/
 - Distribute your apps (production deploy first; Not sharing / Sharing within organization / Sharing; installing user must be site admin): https://developer.atlassian.com/platform/forge/distribute-your-apps/
 - Promote an app to staging or production: https://developer.atlassian.com/platform/forge/staging-and-production-apps/
+
+## P5 (2026-11-04)
+- Rovo modules index (rovo:agent, rovo:skill, action, rovo:mcp, rovo:agentConnector): https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-index/
+- Rovo agent module: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-agent/
+- Rovo action module (payload, context.accountId, inputs not trusted for authorization): https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-action/
+- Rovo MCP module (Preview): https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-mcp/
+- Forge bridge rovo API (open, isEnabled): https://developer.atlassian.com/platform/forge/apis-reference/ui-api-bridge/rovo/
+- Build a Rovo agent hello world (Rovo must be activated): https://developer.atlassian.com/platform/forge/build-a-hello-world-rovo-agent/
+
+## P7 (read 2026-11-05)
+- Codegeist 2026 official rules (read in the Browser pane; a fetch returned 403; page text cut off at section 11): https://codegeist2026.devpost.com/rules
+- Forge: sharing an app / installation link (read by a fetch agent, last updated Oct 30, 2026): https://developer.atlassian.com/platform/forge/distribute-your-apps/#start-sharing-your-app

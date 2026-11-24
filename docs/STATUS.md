@@ -1,40 +1,58 @@
-# Project status
+# PromiseTwin: project status
 
-Status: **P3 SIGNED OFF by operator 2026-11-03 (chat: "Sign off P3") on the evidence in docs/P3-EVIDENCE.md, with the residual gaps listed there (owner self-acknowledge, forbidden viewer, duplicate delivery, flood and FSRT not run live; dependency advisories not re-accepted; predicates are Jira-editor-settable facts). P4 plan APPROVED 2026-11-03 (option (a): strict separation of duties, no demo mode). P4 slices 1-3 IMPLEMENTED LOCALLY, NOT deployed: shared plain-language messages (ADR-026), redesigned issue panel, project portfolio page (`jira:projectPage`, ADR-025). 430/430 tests, strict typecheck, ESLint, `forge lint` clean (no scope change, one new module), portfolio guard mutations M1-M10 all caught. DEPLOYED to development as v3.5.0 (2026-11-04, operator-approved) and LIVE-VERIFIED for the portfolio and panel render: page appears in project nav, `extension.project.key` present, per-role rows/needs-action as A, B, C, filters, 375 px no overflow, keyboard Tab/Enter on the filters. Slice 6 DONE as a draft: docs/P4-JUDGE-GUIDE.md written (not yet followed by an unfamiliar person; install link not created); Rovo entitlement still unverified (docs read, only an "Open Rovo Chat" control observed; decisive test is P5 step 1 and needs approval). The wording fix is DEPLOYED (v3.6.0, development) and verified live. Not verified: hidden-count live, panel keyboard/mobile, any accessibility compliance, unfamiliar-user run (docs/P4-EVIDENCE.md, security-audit-artifacts/security-gate-P4.md). Slices 4-6 (onboarding states beyond the basics, accessibility pass, judges' path) not started.** Prior: **P3 LIVE-VERIFIED on development (2026-11-03, accounts A/B/C): default-deny roles and role admin; B (Reviewer only) refused creation and self-review; VALID review alone did NOT satisfy proof (unmet: no customer label, not linked, not Done, no resolution) and VERIFY was refused; after real Jira facts were fixed the old review went stale, fresh evidence reviewed by C, then VERIFY/ACKNOWLEDGE/FULFILL to FULFILLED with decision reports; removing the label produced the review-required banner without changing state. Not run live: owner self-acknowledge, forbidden viewer, duplicate delivery, flood, FSRT. Awaiting operator P3 sign-off; dependency advisories still need re-acceptance. Details in docs/P3-EVIDENCE.md.** Earlier: **P3 DEPLOYED to development as v3.3.0 on 2026-11-04 (`forge deploy --non-interactive -e development`; lint clean, no approval prompt, install Up-to-date) after the operator approved "enforce then deploy"; the minimum-proof policy (ADR-024) was added first. NOT yet verified live: default deny now applies, so B and C have NO roles until a project admin (A) assigns them via the new roles panel; live positive/negative scenarios pending; the pane needs an admin sign-in.** Before deploy: P3 IMPLEMENTED LOCALLY (378/378 tests). After "review first": independent differential fuzz test added (50,000 random comparisons, 0 disagreements, caught 6 extra mutations; 366/366 tests) and one OPEN POLICY DECISION recorded (security-gate-P3.md concern 7: proof strictness is chosen by the promise creator; recommended fix = require CUSTOMER_LABEL/LINKED_TO_SOURCE on new LINKED_WORK/ARTIFACT criteria). checkable criteria (predicates), derived customer binding, decision reports, review-required, app-level roles (replaces ADR-010), evaluation harness. 364/364 tests, strict typecheck, ESLint, `forge lint` clean (no new scopes), 23 guard mutations caught, computed evaluation: 30 scenarios, 0 misfulfilments. Awaiting operator approval to deploy to development, then live positive/negative scenarios. See docs/P3-EVIDENCE.md, docs/P3-EVALUATION.md, security-audit-artifacts/security-gate-P3.md.** Earlier: P2 SIGNED OFF by operator 2026-11-03 (chat) with the residual gaps in docs/P2-EVIDENCE.md and concerns 2-4 in security-gate-P2.md. P3 plan drafted in docs/P3-PLAN.md, awaiting operator approval and one decision (include app-level roles slice or keep the interim role model). Nothing implemented.** Prior: P2 DEPLOYED to development (v3.2.0, 2026-11-03) and VERIFIED LIVE for the core gate: a promise links a Jira task; a real status change reached the app in ~3 s via the trigger, updated the snapshot, flagged AT RISK, and left lifecycle/evidence untouched (never fulfilled); the hourly sweep ran; Refresh works. Duplicate delivery, live missed-event recovery and live redaction are unit-tested only. Awaiting operator sign-off.** See docs/P2-EVIDENCE.md. Prior: P2 implemented locally (234 tests). 234/234 tests, strict typecheck, ESLint and `forge lint` clean (no new scopes). No live verification yet; awaiting operator approval to deploy to development. See docs/P2-EVIDENCE.md and security-audit-artifacts/security-gate-P2.md.** Earlier: P1 SIGNED OFF by operator 2026-11-02 (chat). P2 plan approved 2026-11-03 (docs/P2-PLAN.md). (Prior status line follows.) P1 DEPLOYED to development (v3.1.0), installed on one-atlas-vebc.atlassian.net. Single-account live run PASSED for create, confirm, start, add-evidence, self-review refusal. FULL FLOW TO FULFILLED verified live with three accounts (A, B, C). Stale proof and REOPEN also verified live. Amend, conflict, forbidden-viewer, live SELF_ACK checks still open.**
-Phase history: P0 closed (operator GO 2026-11-02). P1 started 2026-11-02 on approved plan. P2 not started.
+Updated 2026-11-06 (P7 in progress). Older entries, written phase by phase, are in [HISTORY.md](HISTORY.md). Every claim below is backed by an evidence file; "not verified" means exactly that.
 
-## P1 verified (executed; details in docs/P1-EVIDENCE.md)
-- 116/116 unit tests, tsc strict clean, ESLint clean, `forge lint` clean except the expected scope-modification approval item.
-- Domain proves Done != Fulfilled, fail-closed proof, role/tenant/issue scoping, CAS conflicts, idempotent replay. 10 guard mutations all caught by tests.
-- Security review (manual) in security-audit-artifacts/security-gate-P1.md: no confirmed exploitable finding; one amplification issue found and fixed.
+## Where we are
+**P6 is SIGNED OFF (2026-11-05). P4 is still not signed off.** P7 (production deploy, Sharing link, install test, submission texts, video) is **in progress**: production v2.0.0 is deployed, the install link exists, and the guide was followed on a fresh site by the builder. Deadline: Codegeist submission **22 Dec 2026 12:00 PT** (target submit 18 Dec; dry run 15 Dec).
 
-## P1 NOT verified live
-VERIFY / ACKNOWLEDGE / FULFILL / REOPEN / AMEND, a real stale-write conflict, forbidden-viewer and two-user permission mapping, flood behaviour. FSRT on P1 code not run. See docs/P1-EVIDENCE.md 'Live results'.
+| Phase | State | Evidence |
+|---|---|---|
+| P0 feasibility | Closed (operator GO 2026-11-02) | P0-EVIDENCE.md |
+| P1 domain + audited commands | Signed off 2026-11-02 | P1-EVIDENCE.md |
+| P2 linked work + events + sweep | Signed off 2026-11-03 | P2-EVIDENCE.md |
+| P3 evidence verifier + app roles | Signed off 2026-11-03 | P3-EVIDENCE.md, P3-EVALUATION.md |
+| P4 product UI (panel, portfolio, judge guide) | Built, deployed, live-verified; **not signed off** (no unfamiliar-user run) | P4-EVIDENCE.md, P4-JUDGE-GUIDE.md |
+| P5 Rovo (read-only agent) | Signed off 2026-11-04 | P5-EVIDENCE.md |
+| P6 hardening + clean install | Signed off 2026-11-05 | P6-EVIDENCE.md, security-audit-artifacts/security-gate-P6.md |
+| P7 submission | In progress: production deployed, Sharing link created, install from link verified on a fresh site, scenario steps 1-7, 9, 10 verified live; video, Devpost form, tester run, critic rerun pending | docs/P7-EVIDENCE.md, docs/P7-PLAN.md |
 
-## Open decisions / risks
-- ADR-010 interim role model (any Jira editor holds three roles) needs a decision.
-- Entity declarations in manifest become permanent once deployed.
-- Dependencies: 9 high + 5 moderate transitive advisories (ADR-008 accepted for P0; `@forge/kvs` added in P1 inherits the `@forge/api` one) need operator re-acceptance.
-- Codegeist deadline 22 Dec 2026 12:00 PT. Operator stated eligibility (unverified by me).
-- Carry-over from P0: live "user without access" test; production deploy + Sharing link need approval before submission.
+## What exists
+- Forge app (UI Kit panel + project page, resolvers, issue trigger, hourly sweep, three read-only Rovo actions + one Rovo agent), Node 24 runtime, scopes `read:jira-work`, `read:servicedesk-request`, `storage:app` only.
+- Code: `app/`. Branch `p5-rovo-read-only` (local, **not pushed**; the public GitHub repo already contains two email addresses, so do not push as is). Tag `rc1` = the deployed code. Everything since is docs/submission only.
+- Checks last run 2026-11-05 (tag `rc1`): `npm run check` = strict `tsc` + frontend ESLint + **489/489 tests**; `forge lint` clean. No code changed since.
+- Installs (`forge install list` 2026-11-06): production v2 on **promisetwin-judge-test.atlassian.net** (fresh site, installed from the sharing link); production, staging and development all on **one-atlas-vebc.atlassian.net** (demo site; production added 2026-11-06 for the Rovo check).
+- Console: distribution "Sharing with anyone", Jira; details and privacy/terms URLs (hosted gist) saved; stores personal data = Yes. The install link is not stored in the repo.
 
-## Deploy facts (executed 2026-11-02, operator-approved)
-- `forge deploy --non-interactive -e development --approve MAJOR_VERSION_RULE` -> v3.0.0 deployed; forge lint clean.
-- `forge install --non-interactive --upgrade ...` -> upgraded with `storage:app`; `forge install list`: development, v3, Up-to-date.
-- `forge storage entities indexes list -e development`: `contract` and `audit-event` by-key ACTIVE.
+## Verified live on the production install (fresh site, builder-run, two of the builder's accounts)
+Install from link (took several minutes), consent screen = the three scopes, default deny, role assignment, draft to fulfilled with the evidence refusal, "evidence changed" after fixing the issue, Review required after removing the label, Promises page filters. Setup used a few REST calls (issues, label, link, transition). Not run: owner self-acknowledge refusal (step 8). See P7-EVIDENCE.md.
 
-## Next minimal action (needs operator)
-Provide two extra Atlassian users on the demo site (a reviewer with edit rights and a separate acknowledger) so the full flow to FULFILLED and the forbidden-viewer/conflict cases can run live, OR accept the P1 gate on unit tests + the single-account live run and approve starting P2. Also re-accept the dependency advisories for P1 (ADR-008 + `@forge/kvs`).
+## Findings from the install test
+- Fresh JSM site has no Jira resolutions: added "Done" on the test site; guide step added.
+- Install from link is slow and a second click is refused as a conflicting task (guide updated).
+- Rovo chat is unavailable on the fresh site; the production agent did not appear on the demo site (only staging answered). Best Agents claim is worded as staging/dev-verified only.
+- Personal data: the app stores account IDs but does not use the personal data reporting API (ADR-031, accepted gap, stated in Devpost and privacy text).
 
-## Test accounts (2026-11-02, operator-authorized)
-Invited to org one-atlas-vebc via admin.atlassian.com (invite emails sent): dhanushkumaridk100@gmail.com (planned role B: reviewer) and serpentidk@gmail.com (planned role C: acknowledger). Product access: Jira Service Management **User (agent)** only, group `jira-servicemanagement-users-one-atlas-vebc`; no admin access, no Jira core / other apps. Admin hub banner: "2 users are successfully added to your org" (total users 17 -> 19).
-Pending: the invitees must accept and create their Atlassian accounts themselves; then each needs an edit-capable role on the IT Support project (not yet granted), and the browser pane must be signed in as each in turn (operator signs in; credentials are never entered by the agent).
-Update (2026-11-02): both invitees accepted. Added to project IT Support (ITS) with role **Service Desk Team** via Space settings > People and access (Jira banner: "Dhanush Kumar and serpentidk added to the space"). Mapping: dhanushkumaridk100@gmail.com = "Dhanush Kumar" = B (reviewer); serpentidk@gmail.com = C (acknowledger). Whether Service Desk Team grants EDIT_ISSUES (needed for app roles) is unverified until they open the panel.
-Planned live run (two pane sign-ins): as B: review evidence VALID, mark delivered, verify; as C: acknowledge (after confirming the owner A is refused), then fulfil; optional stale-proof, reopen, amend and conflict checks.
+## Measured (small samples; one site; see P6-EVIDENCE.md for limits)
+- Issue panel load (function time): median 2233 ms before, 980 ms after parallel Jira reads (n=3 each). Portfolio about 0.9-1.1 s. Rovo action about 1.6-2.5 s.
+- Hourly sweep: 12 clean runs in 12 h, about 2 s each, 7 contracts.
+- Test generators: 19,049 random commands with 0 invariant violations; 8,000 hostile inputs with 0 throws or leaks (computed in tests, not live).
 
-P1 gate (plans/P1-DOMAIN.md: "Unit tests prove Done != Fulfilled and missing required proof fails closed; typed CRUD and audited review work in dev"): MET on evidence. Unit tests (116) + mutation checks cover the first half; the live dev run covers the second (create/confirm/start/evidence/review/verify/acknowledge/fulfil across three accounts, stale detection, reopen, audit trail). Residual gaps listed in docs/P1-EVIDENCE.md. Awaiting operator sign-off before P2.
-Cleanup items for the operator: label `promisetwin-test` on ITS-6263; invited users B and C in the org; 4 synthetic contracts in app storage on ITS-6264.
+## Open items (honest list)
+1. **P4 gate:** nobody except the author has followed the guide; needs a person who did not write the code.
+2. **Rovo on production** unverified (above).
+3. **Not run live:** owner self-acknowledge refusal, duplicate event delivery, phone, keyboard and screen-reader use.
+4. **Dependencies:** `npm audit` prod-only 9 high + 5 moderate, inherited from `@forge/*` (ADR-027); re-check before submission.
+5. **Security review** is manual plus one unsigned FSRT build; no independent reviewer.
+6. **Operator-only:** send the Devpost clarification email (submission/CLARIFICATION-REQUEST.md); decide the AI-assistance statement, licence, repo link/privacy, team line; check the Billing Console; record and upload the video; submit on Devpost.
+7. **Demo site** now has three environments installed; decide what to uninstall before recording.
 
-Operator sign-off: P1 accepted on the evidence in docs/P1-EVIDENCE.md with the residual gaps listed there. Operator re-acceptance of the dependency advisories (ADR-008 + `@forge/kvs`) was not explicitly stated in this reply: treat as still OPEN.
+## Decisions waiting for you
+- How to close P4 (a real stranger, or accept as is).
+- Whether to push the branch (needs the public-repo emails dealt with first: make private, scrub, or leave).
+- Whether to uninstall production/staging/development on the demo site.
 
-P2 plan drafted in docs/P2-PLAN.md (not started, nothing implemented). Awaiting operator approval of the plan and of the open choices in it (app-owned link vs Jira issue link; hour interval; scope of Refresh).
+## Accounts used for tests
+A = Dhanushkumar R (app owner); B = Dhanush Kumar (account B; Reviewer + Acknowledger on the fresh site); C = serpentidk (site admin and Support owner on the fresh site). The pane keeps one login at a time; the operator signs in on request. No credentials are ever entered by the agent.
+
+## Next minimal action
+Read the critic's rerun on the submission texts, fix what it finds, then the operator's own steps (item 6). Production stays frozen except for fixes to a break.

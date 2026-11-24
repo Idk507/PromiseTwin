@@ -125,6 +125,15 @@ export function describeDetail(token) {
 }
 
 /**
+ * A user-written phrase without trailing punctuation, so it can sit inside a sentence of ours.
+ * @param {unknown} text
+ * @returns {string} empty when there is nothing usable
+ */
+export function plainName(text) {
+  return typeof text === 'string' ? text.trim().replace(/[\s.!?:;,]+$/, '') : '';
+}
+
+/**
  * One sentence for a blocker token from the fulfilment decision.
  * @param {string} token e.g. ACK_MISSING, CRITERION_stale:c1, PREDICATE_FAILED:c1:CUSTOMER_LABEL
  * @param {{ requiredCustomerLabel?: string, criterionText?: Record<string,string> }} [ctx]
@@ -142,7 +151,7 @@ export function describeBlocker(token, ctx = {}) {
   if (simple[t]) return simple[t];
   const crit = /^CRITERION_(satisfied|missing|stale|conflicting|unauthorized|unmet):(.{1,64})$/.exec(t);
   if (crit) {
-    const name = (ctx.criterionText && ctx.criterionText[crit[2]]) || `criterion ${crit[2]}`;
+    const name = plainName(ctx.criterionText && ctx.criterionText[crit[2]]) || `criterion ${crit[2]}`;
     return `${name}: ${CRITERION_STATUS_TEXT[crit[1]]}.`;
   }
   const pred = /^PREDICATE_FAILED:(.{1,64}):([A-Z_]{1,40})$/.exec(t);
@@ -177,7 +186,25 @@ export function describeRefusal(r, ctx = {}) {
     }
     if (text && !lines.includes(text)) lines.push(text);
   }
+  // The banner already says the action did not go through; a generic first line adds nothing once
+  // specific reasons exist.
+  if (code === 'PRECONDITION_FAILED' && lines.length > 1) lines.shift();
   return lines;
+}
+
+/**
+ * The decision summary shown on an audit line, e.g. "Decision: Fix is deployed is satisfied; all gates held.".
+ * @param {{ criteria: { criterionId: string, status: string }[], canFulfill?: boolean }} report
+ * @param {Record<string,string>} criterionText
+ * @returns {string}
+ */
+export function describeDecision(report, criterionText = {}) {
+  const parts = (report.criteria || []).map((x) => {
+    const name = plainName(criterionText[x.criterionId]) || x.criterionId;
+    const text = CRITERION_STATUS_TEXT[x.status] || x.status;
+    return x.status === 'satisfied' ? `${name} is ${text}` : `${name}: ${text}`;
+  });
+  return `Decision: ${parts.join('; ')}${report.canFulfill ? '; all gates held' : ''}.`;
 }
 
 /**

@@ -25,6 +25,7 @@ import {
   customerLabelFor,
   describeAudit,
   describeBlocker,
+  describeDecision,
   describeRefusal,
   nextStep,
   relativeTime,
@@ -74,6 +75,7 @@ const RolesPanel = ({ onView }) => {
   const [view, setView] = useState(null);
   const [error, setError] = useState(null);
   const [picked, setPicked] = useState(null);
+  const [pickerKey, setPickerKey] = useState(0); // bumping it remounts the picker, clearing the shown selection
   const [chosen, setChosen] = useState([]);
   const [busy, setBusy] = useState(false);
 
@@ -87,7 +89,7 @@ const RolesPanel = ({ onView }) => {
     setBusy(true); setError(null);
     const r = await invoke('setRoles', { assignment: { accountId, roles } });
     setBusy(false);
-    if (r.ok) { accept(r.value); setPicked(null); setChosen([]); } else setError(failureLines(r));
+    if (r.ok) { accept(r.value); setPicked(null); setChosen([]); setPickerKey((k) => k + 1); } else setError(failureLines(r));
   };
 
   if (!view) return error ? <Problem lines={error} title="Could not load roles" /> : null;
@@ -106,7 +108,7 @@ const RolesPanel = ({ onView }) => {
               <Button isDisabled={busy} onClick={() => save(a.accountId, [])}>Remove</Button>
             </Inline>
           ))}
-          <UserPicker label="Assign roles to" name="role-user" onChange={(u) => setPicked(u && u.id ? u.id : null)} />
+          <UserPicker key={pickerKey} label="Assign roles to" name="role-user" onChange={(u) => setPicked(u && u.id ? u.id : null)} />
           {ASSIGNABLE.map(([role, text]) => (
             <Checkbox key={role} label={text} isChecked={chosen.includes(role)}
               onChange={(e) => setChosen((cur) => (e.target.checked ? [...new Set([...cur, role])] : cur.filter((x) => x !== role)))} />
@@ -240,7 +242,7 @@ const Contract = ({ view, reload, startOpen }) => {
   };
 
   const summary = (a) => (a.report
-    ? ` Decision: ${a.report.criteria.map((x) => `${ctx.criterionText[x.criterionId] || x.criterionId} is ${CRITERION_STATUS_TEXT[x.status] || x.status}`).join('; ')}${a.report.canFulfill ? '; all gates held' : ''}.`
+    ? ` ${describeDecision(a.report, ctx.criterionText)}`
     : '');
 
   return (

@@ -60,7 +60,7 @@ NOT verified live (single account only):
 
 Test data left in the demo site's app storage (no delete command exists by design): 4 synthetic contracts on ITS-6264 (3 x SYNTHETIC-ACME, 1 x SYNTHETIC-GLOBEX). The first ACME contract is at IN_PROGRESS with one PENDING evidence item (ITS-6263).
 
-## Live results, second user (2026-11-02, pane signed in as B = dhanushkumaridk100@gmail.com, "Dhanush Kumar")
+## Live results, second user (2026-11-02, pane signed in as B = account B, "Dhanush Kumar")
 Identity verified first via read-only `/rest/api/3/myself` + `mypermissions` on ITS-6264: B has BROWSE and EDIT_ISSUES, **no** ADMINISTER_PROJECTS (role Service Desk Team in IT Support). The pane had initially still been A; the check caught it and the run waited for the switch.
 VERIFIED live as B on contract ACME #1 (created and advanced to IN_PROGRESS by A):
 - Cross-user storage: B sees A's contract (rev 4) and is offered Valid/Invalid (roles resolved from B's own Jira permissions).
@@ -69,8 +69,8 @@ VERIFIED live as B on contract ACME #1 (created and advanced to IN_PROGRESS by A
 - Logs: `applyCommand: ok` for both B commands; no payload data.
 Observed (confirms ADR-010 limitation live): B, an ordinary editor, is also offered Acknowledge for this contract (B is not the owner), so with only two editors one can drive the whole flow. Acknowledgement by a distinct third user (C) is still planned.
 
-## Live results, third user: full flow to FULFILLED (2026-11-02, pane signed in as C = serpentidk@gmail.com)
-Identity verified first (read-only): C = `serpentidk@gmail.com`, BROWSE + EDIT_ISSUES, no ADMINISTER_PROJECTS. (An earlier attempt found the pane on a login chooser listing only A; no action was taken until the switch was confirmed.)
+## Live results, third user: full flow to FULFILLED (2026-11-02, pane signed in as C = account C)
+Identity verified first (read-only): C = `account C`, BROWSE + EDIT_ISSUES, no ADMINISTER_PROJECTS. (An earlier attempt found the pane on a login chooser listing only A; no action was taken until the switch was confirmed.)
 VERIFIED live on contract SYNTHETIC-ACME #1 (ITS-6264), by three distinct accounts:
 - A (owner): CREATE, CONFIRM, START, ADD_EVIDENCE (ITS-6263); A's own review attempt refused (SELF_REVIEW).
 - B (reviewer): REVIEW_EVIDENCE VALID, MARK_DELIVERED, VERIFY (rev 5 -> 7).

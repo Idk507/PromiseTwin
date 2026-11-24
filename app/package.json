@@ -7,7 +7,8 @@
   "scripts": {
     "lint": "eslint src/frontend/**/*",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm run test"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
@@ -18,10 +19,10 @@
   },
   "dependencies": {
     "@forge/api": "^8.4.0",
-    "@forge/bridge": "7.2.1-next.13",
+    "@forge/bridge": "7.2.1",
     "@forge/kvs": "^2.1.1",
-    "@forge/react": "12.4.0-next.3",
-    "@forge/resolver": "2.0.2-next.0",
+    "@forge/react": "12.4.0",
+    "@forge/resolver": "2.0.2",
     "react": "^18.2.0",
     "zod": "^4.6.7"
   }

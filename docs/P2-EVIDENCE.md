@@ -34,7 +34,7 @@ Only items marked VERIFIED were executed in this session. Nothing in P2 has been
 6. UI rendering of the new section and the Refresh button.
 7. Event volume/cost on a busy site: every update to every issue invokes the trigger function. Filters cannot consult my storage, so this cost remains; the cheap path is one plain-KVS read.
 
-## Live results (2026-11-03, development v3.2.0, demo site one-atlas-vebc.atlassian.net, pane signed in as B = dhanushkumaridk100@gmail.com, identity checked read-only first)
+## Live results (2026-11-03, development v3.2.0, demo site one-atlas-vebc.atlassian.net, pane signed in as B = account B, identity checked read-only first)
 Deploy: `forge deploy --non-interactive -e development` -> v3.2.0, lint clean, **no scope/approval prompt**, install stayed Up-to-date (no `--upgrade` needed).
 VERIFIED live:
 - **UI + backward compatibility:** the new "Linked work (progress only, not proof)" section renders; a contract stored under P1 (rev 10, no `linkedWork`) loaded fine with the field defaulted.

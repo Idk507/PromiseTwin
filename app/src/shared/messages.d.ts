@@ -12,3 +12,5 @@ export function describeAudit(a: { type: string; fromLifecycle?: string; toLifec
 export function relativeTime(iso: string, nowMs?: number): string;
 export function timeline(lifecycle: string): { stage: string; label: string; state: 'done' | 'current' | 'todo' }[];
 export function nextStep(contract: { lifecycle: string; atRisk?: boolean }, available: string[], reviewRequired?: { required?: boolean }): string;
+export function plainName(text: unknown): string;
+export function describeDecision(report: { criteria: { criterionId: string; status: string }[]; canFulfill?: boolean }, criterionText?: Record<string, string>): string;
